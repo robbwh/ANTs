@@ -110,11 +110,45 @@ typename InterpolatorType::Pointer interpolator = nullptr;
     interpolator = welchInterpolator;
     }
   else if( !std::strcmp( whichInterpolator.c_str(), "genericlabel" ) )
+  {
+    if( interpolationOption->GetFunction( 0 )->GetNumberOfParameters() > 0 )
     {
-	typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LinearInterpolateImageFunction,RealType> GLInterpolatorType;
-	typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
-	interpolator = GenericLabelInterpolator;
+        std::string labelInterpType = interpolationOption->GetFunction( 0 )->GetParameter( 0 );
+
+        if( labelInterpType == "Linear" )
+        {
+            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LinearInterpolateImageFunction,RealType> GLInterpolatorType;
+            typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
+            interpolator = GenericLabelInterpolator;
+        }
+        else if( labelInterpType == "WelchWindowedSinc" )
+        {
+            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::WelchWindowedSincInterpolateImageFunction,RealType> GLInterpolatorType;
+            typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
+            interpolator = GenericLabelInterpolator;
+        }
+        else if( labelInterpType == "LanczosWindowedSinc" )
+        {
+            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LanczosWindowedSincInterpolateImageFunction,RealType> GLInterpolatorType;
+            typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
+            interpolator = GenericLabelInterpolator;
+        }
+        // Add more options here as needed
+        else
+        {
+            std::cerr << "Unknown generic label interpolator type: " << labelInterpType << std::endl;
+            exit(EXIT_FAILURE);
+        }
     }
+    else
+    {
+        // Default to linear if no specific type is provided
+        typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LinearInterpolateImageFunction,RealType> GLInterpolatorType;
+        typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
+        interpolator = GenericLabelInterpolator;
+    }
+  }
+
   else if( !std::strcmp( whichInterpolator.c_str(), "multilabel" ) )
     {
     typedef typename itk::LabelImageGaussianInterpolateImageFunction<ImageType, RealType> MultiLabelInterpolatorType;
