@@ -115,21 +115,23 @@ typename InterpolatorType::Pointer interpolator = nullptr;
     {
         std::string labelInterpType = interpolationOption->GetFunction( 0 )->GetParameter( 0 );
 
-        if( labelInterpType == "Linear" )
+        if( labelInterpType == "linear" )
         {
             typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LinearInterpolateImageFunction,RealType> GLInterpolatorType;
             typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
             interpolator = GenericLabelInterpolator;
         }
-        else if( labelInterpType == "WelchWindowedSinc" )
+        else if( labelInterpType == "welchwindowedsinc" )
         {
-            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::WelchWindowedSincInterpolateImageFunction,RealType> GLInterpolatorType;
+            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::WindowedSincInterpolateImageFunction
+                 <ImageType, 3, itk::Function::WelchWindowFunction<3, RealType, RealType>, itk::ConstantBoundaryCondition< ImageType >, RealType>,RealType> GLInterpolatorType;
             typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
             interpolator = GenericLabelInterpolator;
         }
-        else if( labelInterpType == "LanczosWindowedSinc" )
+        else if( labelInterpType == "lanczoswindowedsinc" )
         {
-            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LanczosWindowedSincInterpolateImageFunction,RealType> GLInterpolatorType;
+            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::WindowedSincInterpolateImageFunction
+                 <ImageType, 3, itk::Function::LanczosWindowFunction<3, RealType, RealType>, itk::ConstantBoundaryCondition< ImageType >, RealType>,RealType> GLInterpolatorType;
             typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
             interpolator = GenericLabelInterpolator;
         }
