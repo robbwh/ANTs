@@ -117,25 +117,32 @@ typename InterpolatorType::Pointer interpolator = nullptr;
 
         if( labelInterpType == "linear" )
         {
-            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LinearInterpolateImageFunction,RealType> GLInterpolatorType;
+            // Linear interpolation (matching the original)
+            typedef itk::LabelImageGenericInterpolateImageFunction<
+                ImageType, itk::LinearInterpolateImageFunction, RealType> GLInterpolatorType;
             typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
             interpolator = GenericLabelInterpolator;
         }
         else if( labelInterpType == "welchwindowedsinc" )
         {
-            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::WindowedSincInterpolateImageFunction
-                 <ImageType, 3, itk::Function::WelchWindowFunction<3, RealType, RealType>, itk::ConstantBoundaryCondition< ImageType >, RealType>,RealType> GLInterpolatorType;
+            // Welch windowed sinc interpolation
+            typedef itk::WindowedSincInterpolateImageFunction<
+                ImageType, 3, itk::Function::WelchWindowFunction<3>, itk::ConstantBoundaryCondition<ImageType>, RealType> WelchInterpolatorType;
+            typedef itk::LabelImageGenericInterpolateImageFunction<
+                ImageType, WelchInterpolatorType, RealType> GLInterpolatorType;
             typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
             interpolator = GenericLabelInterpolator;
         }
         else if( labelInterpType == "lanczoswindowedsinc" )
         {
-            typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::WindowedSincInterpolateImageFunction
-                 <ImageType, 3, itk::Function::LanczosWindowFunction<3, RealType, RealType>, itk::ConstantBoundaryCondition< ImageType >, RealType>,RealType> GLInterpolatorType;
+            // Lanczos windowed sinc interpolation
+            typedef itk::WindowedSincInterpolateImageFunction<
+                ImageType, 3, itk::Function::LanczosWindowFunction<3>, itk::ConstantBoundaryCondition<ImageType>, RealType> LanczosInterpolatorType;
+            typedef itk::LabelImageGenericInterpolateImageFunction<
+                ImageType, LanczosInterpolatorType, RealType> GLInterpolatorType;
             typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
             interpolator = GenericLabelInterpolator;
         }
-        // Add more options here as needed
         else
         {
             std::cerr << "Unknown generic label interpolator type: " << labelInterpType << std::endl;
@@ -145,12 +152,13 @@ typename InterpolatorType::Pointer interpolator = nullptr;
     else
     {
         // Default to linear if no specific type is provided
-        typedef itk::LabelImageGenericInterpolateImageFunction<ImageType,itk::LinearInterpolateImageFunction,RealType> GLInterpolatorType;
+        typedef itk::LabelImageGenericInterpolateImageFunction<
+            ImageType, itk::LinearInterpolateImageFunction, RealType> GLInterpolatorType;
         typename GLInterpolatorType::Pointer GenericLabelInterpolator = GLInterpolatorType::New();
         interpolator = GenericLabelInterpolator;
     }
   }
-
+ 
   else if( !std::strcmp( whichInterpolator.c_str(), "multilabel" ) )
     {
     typedef typename itk::LabelImageGaussianInterpolateImageFunction<ImageType, RealType> MultiLabelInterpolatorType;
